@@ -2,7 +2,6 @@ package com.julialoseva.wavedemo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.julialoseva.wave.TestClass
 
 class MainActivity : AppCompatActivity() {
 
