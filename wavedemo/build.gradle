@@ -35,4 +35,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':wave')
+
+    implementation 'com.github.igormatyushkin014:Consent:1.0'
+
+    implementation 'com.github.julialoseva:Rainbow:1.2'
 }
