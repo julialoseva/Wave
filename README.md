@@ -1,6 +1,6 @@
 ## At a Glance
 
-Documentation is in progress.
+`Wave` is a convenient tool for recording with microphone and playing audio files.
 
 ## How to Get Started
 
@@ -31,7 +31,44 @@ dependencies {
 
 ## Usage
 
-Documentation is in progress.
+### Recording
+
+You have to use `Input` instance for recording sound with microphone. Example:
+
+```kotlin
+val input = Input(
+    filePath = "record.3gpp",
+    context = this
+)
+input.start() // Recording started
+input.stop() // Recording stopped
+```
+
+### Playing
+
+Use `Output` instance for playing your sound. Example:
+
+```kotlin
+val output = Output(
+    filePath = "record.3gpp"
+)
+output.start() // Playing started
+output.stop() // Playing stopped
+```
+
+### Syntactic Sugar
+
+Please note that `waveInput` is intended for recording, while `waveOutput` is for playing your record. Both methods are available from any `Context` instance.
+
+Just type `waveInput` or `waveOutput` in your activity, then pass your file path as an argument and call `start()` or `stop()` according to your purposes, as here:
+
+```kotlin
+val input = waveInput("record.3gpp")
+    .apply { start() }
+
+val output = waveOutput("record.3gpp")
+    .apply { start() }
+```
 
 ## License
 
