@@ -8,8 +8,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
-import com.julialoseva.wave.PlayManager
-import com.julialoseva.wave.RecordManager
+import com.julialoseva.wave.engine.Input
+import com.julialoseva.wave.engine.Output
+import com.julialoseva.wave.extensions.waveInput
+import com.julialoseva.wave.extensions.waveOutput
 import com.visuality.consent.bridge.getConsent
 import com.visuality.consent.bridge.handleConsent
 
@@ -27,14 +29,20 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.stop_button)
     }
 
-    private val recordManager by lazy {
-        RecordManager(this)
+    private val input by lazy {
+        waveInput(
+            AppConfiguration.getRecordFilePath(
+                this,
+                RECORD_FILE_NAME
+            )
+        )
     }
 
-    private val playManager by lazy {
-        PlayManager(
-            AppConfiguration.getRecordFilePath(
-                this
+    private val output by lazy {
+        waveOutput(
+            filePath = AppConfiguration.getRecordFilePath(
+                this,
+                RECORD_FILE_NAME
             )
         )
     }
@@ -49,8 +57,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        this.playManager.stopPlay()
-        this.recordManager.stopRecord()
+        this.output.stop()
+        this.input.stop()
         super.onDestroy()
     }
 
@@ -71,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             if (it.hasBlocked) {
                 Toast.makeText(
                     this,
-                    "Включите необходимые разрешения",
+                    "Permissions are not available",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -86,11 +94,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
                 return when(motionEvent!!.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        recordManager.startRecord(
-                            AppConfiguration.getRecordFilePath(
-                                this@MainActivity
-                            )
-                        )
+                        this@MainActivity.input.start()
                         recordButton.setColorFilter(
                             resources.getColor(
                                 R.color.rb_green_300
@@ -99,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                         true
                     }
                     MotionEvent.ACTION_UP -> {
-                        recordManager.stopRecord()
+                        this@MainActivity.input.stop()
                         recordButton.setColorFilter(
                             resources.getColor(
                                 R.color.rb_black
@@ -115,13 +119,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun preparePlayButton() {
         this.playButton.setOnClickListener {
-            this.playManager.startPlay()
+            this.output.start()
         }
     }
 
     private fun prepareStopButton() {
         this.stopButton.setOnClickListener {
-            this.playManager.stopPlay()
+            this.output.stop()
         }
+    }
+
+    companion object {
+        const val RECORD_FILE_NAME = "record.3gpp"
     }
 }

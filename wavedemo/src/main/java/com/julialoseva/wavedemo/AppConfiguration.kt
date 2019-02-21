@@ -5,8 +5,9 @@ import android.os.Environment
 
 object AppConfiguration {
 
-    private fun getRecordFolderPath(
-        context: Context
+    fun getRecordFilePath(
+        context: Context,
+        fileName: String
     ): String {
         val environmentDirectory = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_MUSIC
@@ -14,14 +15,6 @@ object AppConfiguration {
         val appDirectoryName = context.resources.getString(
             R.string.app_name
         )
-        return "$environmentDirectory/$appDirectoryName"
-    }
-
-    private const val recordFileName = "record.3gpp"
-
-    fun getRecordFilePath(
-        context: Context
-    ): String {
-        return "${this.getRecordFolderPath(context)}/${this.recordFileName}"
+        return "$environmentDirectory/$appDirectoryName/${fileName}"
     }
 }
