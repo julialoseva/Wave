@@ -1,9 +1,9 @@
-package com.julialoseva.wave
+package com.julialoseva.wave.engine
 
 import android.media.MediaPlayer
 import java.lang.Exception
 
-class PlayManager(
+class Output(
     val filePath: String
 ) {
 
@@ -12,14 +12,14 @@ class PlayManager(
     private fun prepareMediaPlayer() {
         this.mediaPlayer = MediaPlayer().apply {
             setDataSource(
-                this@PlayManager.filePath
+                this@Output.filePath
             )
             prepare()
             start()
         }
     }
 
-    fun startPlay() {
+    fun start() {
         try {
             this.prepareMediaPlayer()
         } catch (e: Exception) {
@@ -27,7 +27,7 @@ class PlayManager(
         }
     }
 
-    fun stopPlay() {
+    fun stop() {
         this.mediaPlayer?.let {
             it.stop()
             it.release()

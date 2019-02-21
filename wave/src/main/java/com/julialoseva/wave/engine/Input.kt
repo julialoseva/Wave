@@ -1,4 +1,4 @@
-package com.julialoseva.wave
+package com.julialoseva.wave.engine
 
 import android.content.Context
 import android.media.MediaRecorder
@@ -6,14 +6,15 @@ import android.media.MediaScannerConnection
 import java.io.File
 import java.io.IOException
 
-class RecordManager(
+class Input(
+    private val filePath: String,
     private val context: Context
 ) {
 
     private var mediaRecorder: MediaRecorder? = null
 
-    fun startRecord(filePath: String) {
-        val outFile = File(filePath)
+    fun start() {
+        val outFile = File(this.filePath)
         outFile.mkdirs()
 
         if (outFile.exists()) {
@@ -47,7 +48,7 @@ class RecordManager(
         }
     }
 
-    fun stopRecord() {
+    fun stop() {
         this.mediaRecorder?.let {
             try {
                 it.stop()
