@@ -5,6 +5,7 @@ import android.media.MediaRecorder
 import android.media.MediaScannerConnection
 import java.io.File
 import java.io.IOException
+import java.util.*
 
 class Input(
     private val filePath: String,
@@ -13,7 +14,11 @@ class Input(
 
     private var mediaRecorder: MediaRecorder? = null
 
-    fun start() {
+    private var recordingStartTimestamp: Long = 0
+
+    fun start(
+        setupRecorder: ((mediaRecoder: MediaRecorder) -> Unit)? = null
+    ) {
         val outFile = File(this.filePath)
         outFile.mkdirs()
 
@@ -46,17 +51,38 @@ class Input(
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
+        this.recordingStartTimestamp = Date().time
     }
 
     fun stop() {
-        this.mediaRecorder?.let {
-            try {
-                it.stop()
-            } catch (e: IllegalStateException) {
-                e.printStackTrace()
+        val stopRecording = {
+            this.mediaRecorder?.let {
+                try {
+                    it.stop()
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
+                }
             }
+            this.mediaRecorder?.release()
+            this.mediaRecorder = null
         }
-        this.mediaRecorder?.release()
-        this.mediaRecorder = null
+
+        val recordDuration = Date().time - this.recordingStartTimestamp
+
+        if (recordDuration < MINIMUM_ALLOWED_RECORD_DURATION) {
+            val requiredFinishTimestamp = this.recordingStartTimestamp + MINIMUM_ALLOWED_RECORD_DURATION
+
+            while (Date().time < requiredFinishTimestamp) {
+            }
+
+            stopRecording()
+        } else {
+            stopRecording()
+        }
+    }
+
+    companion object {
+        const val MINIMUM_ALLOWED_RECORD_DURATION: Long = 1000
     }
 }
