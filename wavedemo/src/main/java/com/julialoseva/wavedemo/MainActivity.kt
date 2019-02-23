@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import com.julialoseva.wave.engine.Input
 import com.julialoseva.wave.engine.Output
@@ -15,7 +16,7 @@ import com.julialoseva.wave.extensions.waveOutput
 import com.visuality.consent.bridge.getConsent
 import com.visuality.consent.bridge.handleConsent
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Output.OnPlayListener {
 
     private val recordButton by lazy {
         findViewById<ImageButton>(R.id.record_button)
@@ -27,6 +28,10 @@ class MainActivity : AppCompatActivity() {
 
     private val stopButton by lazy {
         findViewById<Button>(R.id.stop_button)
+    }
+
+    private val timeTextView by lazy {
+        findViewById<TextView>(R.id.time_text_view)
     }
 
     private val input by lazy {
@@ -44,7 +49,9 @@ class MainActivity : AppCompatActivity() {
                 this,
                 RECORD_FILE_NAME
             )
-        )
+        ).apply {
+            onPlayListener = this@MainActivity
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,6 +134,20 @@ class MainActivity : AppCompatActivity() {
         this.stopButton.setOnClickListener {
             this.output.stop()
         }
+    }
+
+    override fun onStarted(output: Output) {
+        this.timeTextView.text = "${output.progress.currentPosition} : ${output.progress.duration}"
+    }
+
+    override fun onProgressChanged(output: Output) {
+        this.timeTextView.text = "${output.progress.currentPosition} : ${output.progress.duration}"
+    }
+
+    override fun onPause(output: Output) {
+    }
+
+    override fun onCompleted(reason: Output.CompletionReason, output: Output) {
     }
 
     companion object {
